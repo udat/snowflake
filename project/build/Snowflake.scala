@@ -10,7 +10,7 @@ class SnowflakeProject(info: ProjectInfo) extends StandardServiceProject(info)
   val slf4jLog = "org.slf4j" % "slf4j-nop" % "1.5.8"
   val configgy = "net.lag" % "configgy" % "2.0.1"
   val commonsPool = "commons-pool" % "commons-pool" % "1.5.4"
-  val ostrich = "com.twitter" % "ostrich" % "2.3.3"
+  val ostrich = "com.twitter" % "ostrich" % "4.0.1"
   val sp = "org.scala-tools.testing" % "specs_2.8.0"  % "1.6.5"
   val thrift = "thrift" % "libthrift" % "0.5.0"
   val commonsCodec = "commons-codec" % "commons-codec" % "1.4"

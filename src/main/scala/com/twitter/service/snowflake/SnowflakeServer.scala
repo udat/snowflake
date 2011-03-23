@@ -17,8 +17,7 @@ import org.apache.zookeeper.{KeeperException, CreateMode, Watcher, WatchedEvent}
 import org.apache.zookeeper.KeeperException.NodeExistsException
 import scala.collection.mutable
 import java.net.InetAddress
-import com.twitter.ostrich
-import com.twitter.ostrich.Stats
+import com.twitter.ostrich.stats.Stats
 
 case class Peer(hostname: String, port: Int)
 
@@ -38,8 +37,8 @@ object SnowflakeServer {
     new ZooKeeperClient(zkHostlist)
   }
 
-  Stats.makeGauge("datacenter_id") { datacenterId }
-  Stats.makeGauge("worker_id") { workerId }
+  Stats.addGauge("datacenter_id") { datacenterId }
+  Stats.addGauge("worker_id") { workerId }
   def shutdown(): Unit = {
     if (server != null) {
       log.info("Shutting down.")
@@ -56,8 +55,6 @@ object SnowflakeServer {
     }
 
     registerWorkerId(workerId)
-    val admin = new AdminService(admin_port, admin_backlog, new ostrich.RuntimeEnvironment(getClass))
-
     Thread.sleep(Configgy.config("snowflake.startup_sleep_ms").toLong)
 
     try {
