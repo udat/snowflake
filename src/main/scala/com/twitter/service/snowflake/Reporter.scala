@@ -131,6 +131,6 @@ class Reporter {
   }
 
   override def finalize() {
-    thread.stop
+    thread.shutdown
   }
 }

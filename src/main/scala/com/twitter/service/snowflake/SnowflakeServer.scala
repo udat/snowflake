@@ -63,12 +63,15 @@ object SnowflakeServer {
 
       val processor = new Snowflake.Processor(worker)
       val transport = new TNonblockingServerSocket(server_port)
-      val serverOpts = new THsHaServer.Options
-      serverOpts.workerThreads = Configgy.config("snowflake.thrift-server-threads").toInt
 
-      val server = new THsHaServer(processor, transport, serverOpts)
+      val workerThreads = Configgy.config("snowflake.thrift-server-threads").toInt
+      val serverOpts = new THsHaServer.Args(transport)
+      serverOpts.workerThreads(workerThreads)
+      serverOpts.processor(processor);
 
-      log.info("Starting server on port %s with workerThreads=%s", server_port, serverOpts.workerThreads)
+      val server = new THsHaServer(serverOpts)
+
+      log.info("Starting server on port %s with workerThreads=%s", server_port, workerThreads)
       server.serve()
     } catch {
       case e: Exception => {
@@ -84,6 +87,7 @@ object SnowflakeServer {
     while (true) {
       try {
         zkClient.create("%s/%s".format(workerIdZkPath, i), (getHostname + ':' + server_port).getBytes(), EPHEMERAL)
+        log.info("successfully claimed workerId %d", i)
         return
       } catch {
         case e: NodeExistsException => {
@@ -96,7 +100,6 @@ object SnowflakeServer {
           }
         }
       }
-      log.info("successfully claimed workerId %d", i)
     }
   }
 
